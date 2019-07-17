@@ -36,6 +36,23 @@ class VisibilityState {
 		this.oldResult = undefined
 
 		this.observer = new IntersectionObserver(entries => {
+			
+			for (const change of entries) {
+				// ⚠️ Feature detection
+				if (typeof change.isVisible === 'undefined') {
+					// The browser doesn't support Intersection Observer v2, falling back to v1 behavior.
+					change.isVisible = true;
+				}
+				if (change.isIntersecting && change.isVisible) {
+					this.oldResult = 1
+				} else {
+					this.oldResult = 0;
+				}
+					if (result === this.oldResult) return
+				this.callback(result, entry)
+		  }
+			
+			/*
 			var entry = entries[0]
 			if (this.callback) {
 				// Use isIntersecting if possible because browsers can report isIntersecting as true, but intersectionRatio as 0, when something very slowly enters the viewport.
@@ -43,7 +60,7 @@ class VisibilityState {
 				if (result === this.oldResult) return
 				this.oldResult = result
 				this.callback(result, entry)
-			}
+			}*/
 		}, this.options.intersection)
 
 		// Wait for the element to be in document
